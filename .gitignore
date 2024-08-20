@@ -1,2 +1,5 @@
 /data
 .env
+test.py
+*__pycache__
+*checkpoints
