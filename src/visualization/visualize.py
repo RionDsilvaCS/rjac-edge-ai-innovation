@@ -2,7 +2,7 @@ from tensorboard.backend.event_processing.event_accumulator import EventAccumula
 import matplotlib.pyplot as plt
 import os
 
-event_file = '/home/rion/light_proj/gits/edge_ai_seg_model/experiments/exp01/logs/unet_exp_01/version_2/events.out.tfevents.1724178699.VictusBaby.3869.0'
+event_file = '/home/rion/light_proj/gits/edge_ai_seg_model/experiments/exp01/logs/exp_01_deeplabv3_resnet50/version_0/events.out.tfevents.1724321413.VictusBaby.20808.0'
 save_pth = '/home/rion/light_proj/gits/edge_ai_seg_model/experiments/exp01/results'
 
 def save_graph(tag):
@@ -14,7 +14,7 @@ def save_graph(tag):
         y.append(scalar_event.value)
         i += 1
 
-    plt.ylim(0, 1)
+    plt.ylim(0, max(y))
     plt.plot(x, y)
 
     tag = tag.split('/')
