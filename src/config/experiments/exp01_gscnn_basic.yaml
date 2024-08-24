@@ -1,0 +1,39 @@
+transform:
+  img_width: 224
+  img_height: 224
+
+num_classes: 2
+
+accelerator: 'cuda'
+devices: [0]
+
+optimizer_type: 'adam'
+learning_rate: 0.001
+loss_type: 'joint_edge_seg_loss'
+
+min_epochs: 10
+max_epochs: 100
+log_every_n_steps: 16
+check_val_every_n_epoch: 5
+
+limit_train_batches: 0.9
+limit_val_batches: 0.9
+limit_test_batches: 0.9
+
+train:
+  root_dir: ./data/processed/train 
+  batch_size: 4
+  shuffle: True
+
+val:
+  root_dir: ./data/processed/val
+  batch_size: 4
+  shuffle: False
+
+test:
+  root_dir: ./data/processed/test
+  batch_size: 2
+  shuffle: False
+
+log_name: 'exp_01_gscnn'
+log_path: './experiments/exp01/logs' 

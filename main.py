@@ -8,7 +8,7 @@ from src.tools.train import LightningModel
 torch.set_float32_matmul_precision('high')
 torch.manual_seed(314159)
 
-cfg = build_config('exp01_config.yaml')
+cfg = build_config('exp01_gscnn_basic.yaml')
     
 model = LightningModel(cfg)
 # model = LightningModel.load_from_checkpoint('pth/name.ckpt', config=config)
@@ -25,7 +25,7 @@ trainer = L.Trainer(accelerator=cfg['accelerator'],
                     min_epochs=cfg['min_epochs'],
                     max_epochs=cfg['max_epochs'],
                     log_every_n_steps=cfg['log_every_n_steps'],
-                    # check_val_every_n_epoch=cfg['check_val_every_n_epoch'],
+                    check_val_every_n_epoch=cfg['check_val_every_n_epoch'],
 
                     enable_checkpointing=True,
                     # callbacks=[cfg['checkpoint_callback']],
