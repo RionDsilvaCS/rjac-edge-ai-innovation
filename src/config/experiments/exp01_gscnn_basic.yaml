@@ -12,9 +12,9 @@ learning_rate: 0.001
 loss_type: 'joint_edge_seg_loss'
 
 min_epochs: 10
-max_epochs: 100
-log_every_n_steps: 16
-check_val_every_n_epoch: 5
+max_epochs: 60
+log_every_n_steps: 32
+check_val_every_n_epoch: 1
 
 limit_train_batches: 0.9
 limit_val_batches: 0.9
@@ -32,8 +32,9 @@ val:
 
 test:
   root_dir: ./data/processed/test
-  batch_size: 2
+  batch_size: 1
   shuffle: False
 
 log_name: 'exp_01_gscnn'
 log_path: './experiments/exp01/logs' 
+checkpoint_dir: './data/model_chckpt/gated_scnn'

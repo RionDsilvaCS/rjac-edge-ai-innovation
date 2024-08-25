@@ -1,11 +1,11 @@
 import torch
-from torch.nn import functional as F
 from torch.utils.data import Dataset, DataLoader
 from torchvision import io, transforms 
 from torchvision.transforms.functional import rgb_to_grayscale
-from typing import List, Dict
+from typing import Dict
 import numpy as np
 import os
+import random
 
 ALL_CLASSES = ['background', 'defect']
 
@@ -37,8 +37,17 @@ class ImageDataset(Dataset):
 
         self.img_data = []
 
-        self.transform = transforms.Compose([
+        self.transform_img = transforms.Compose([
             transforms.Resize(size=(self.cfg['transform']['img_height'], self.cfg['transform']['img_width'])),
+            transforms.Lambda(lambda x: x/255.0),
+        ])
+
+        self.transform_seg = transforms.Compose([
+            transforms.Resize(size=(self.cfg['transform']['img_height'], self.cfg['transform']['img_width'])),
+        ])
+
+        self.flip = transforms.Compose([
+            transforms.RandomHorizontalFlip(p=1.0),
         ])
 
         self.class_values = set_class_values(
@@ -70,17 +79,19 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, idx):
         img_pth, seg_mask_pth, edg_mask_pth = self.img_data[idx]
+        num = random.choice([0, 1])
+
         img = io.read_image(img_pth)
 
         if seg_mask_pth is not None:
             seg_mask = io.read_image(seg_mask_pth)
-            seg_mask = self.transform(seg_mask)
+            seg_mask = self.transform_seg(seg_mask)
             seg_mask[seg_mask < 200] = 0
             seg_mask[seg_mask >= 200] = 255
             seg_mask = seg_mask.permute(1, 2, 0)
 
             edge_mask = io.read_image(edg_mask_pth)
-            edge_mask = self.transform(edge_mask)
+            edge_mask = self.transform_seg(edge_mask)
             edge_mask = rgb_to_grayscale(edge_mask)
             
         else:
@@ -90,7 +101,12 @@ class ImageDataset(Dataset):
         seg_mask = get_label_mask(seg_mask, self.class_values, LABEL_COLORS_LIST)
         seg_mask = torch.tensor(seg_mask, dtype=torch.long)
         
-        img = self.transform(img)
+        img = self.transform_img(img)
+
+        if num == 1:
+            img = self.flip(img)
+            seg_mask = self.flip(seg_mask)
+            edge_mask = self.flip(edge_mask)
 
         return img.float(), seg_mask, edge_mask.float()
     
