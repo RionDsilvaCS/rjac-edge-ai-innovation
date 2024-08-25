@@ -1,0 +1,44 @@
+transform:
+  img_width: 520
+  img_height: 520
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+  
+num_channels: 1
+num_classes: 2
+model_name: 'deeplabv3_mobilenet'
+
+accelerator: 'cuda'
+devices: [0]
+
+optimizer_type: 'adam'
+learning_rate: 0.0001
+loss_type: 'cross_entropy_loss'
+
+min_epochs: 2
+max_epochs: 80
+log_every_n_steps: 32
+check_val_every_n_epoch: 1
+
+limit_train_batches: 0.9
+limit_val_batches: 0.9
+limit_test_batches: 0.9
+
+train:
+  root_dir: ./data/processed/train 
+  batch_size: 4
+  shuffle: True
+
+val:
+  root_dir: ./data/processed/val
+  batch_size: 4
+  shuffle: False
+
+test:
+  root_dir: ./data/processed/test
+  batch_size: 1
+  shuffle: False
+
+log_name: 'exp_01_deeplabv3_mobilenet'
+log_path: './experiments/exp02/logs' 
+checkpoint_dir: './data/model_chckpt/deeplab'
