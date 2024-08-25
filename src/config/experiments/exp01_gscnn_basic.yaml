@@ -1,6 +1,6 @@
 transform:
-  img_width: 224
-  img_height: 224
+  img_width: 300
+  img_height: 300
 
 num_classes: 2
 
@@ -8,11 +8,11 @@ accelerator: 'cuda'
 devices: [0]
 
 optimizer_type: 'adam'
-learning_rate: 0.001
+learning_rate: 0.0001
 loss_type: 'joint_edge_seg_loss'
 
 min_epochs: 10
-max_epochs: 60
+max_epochs: 80
 log_every_n_steps: 32
 check_val_every_n_epoch: 1
 
