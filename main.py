@@ -11,7 +11,7 @@ torch.manual_seed(314159)
 cfg = build_config('exp01_config.yaml')
     
 model = LightningModel(cfg)
-# model = LightningModel.load_from_checkpoint('pth/name.ckpt', config=config)
+# model = LightningModel.load_from_checkpoint('experiments/exp01/logs/unet_exp_01/version_42/checkpoints/epoch=49-step=1700.ckpt', cfg=cfg)
 
 train_loader = build_data_loader('train', cfg)
 val_loader = build_data_loader('val', cfg)
@@ -20,7 +20,7 @@ test_loader = build_data_loader('test', cfg)
 logger = TensorBoardLogger(cfg['log_path'], name=cfg['log_name'])
 
 trainer = L.Trainer(accelerator=cfg['accelerator'], 
-                    devices=cfg['devices'],
+                    # devices=cfg['devices'],
 
                     min_epochs=cfg['min_epochs'],
                     max_epochs=cfg['max_epochs'],

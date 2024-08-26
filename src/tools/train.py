@@ -17,6 +17,7 @@ class LightningModel(L.LightningModule):
     def training_step(self, batch, batch_idx):
         x, y = batch
         out = self(x)
+        # print("out", out.shape)
         loss = self.criterion(out, y)
 
         self.log("train/loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=False)
@@ -30,6 +31,8 @@ class LightningModel(L.LightningModule):
     def validation_step(self, batch, batch_idx):
         x, y = batch
         out = self(x)
+        # print("out", out.shape)
+
         loss = self.criterion(out, y)
 
         self.log("val/loss", loss, on_epoch=True, prog_bar=True, logger=False)
@@ -43,6 +46,8 @@ class LightningModel(L.LightningModule):
     def test_step(self, batch, batch_idx):
         x, y = batch
         out = self(x)
+        # print("out", out.shape)
+
         loss = self.criterion(out, y)
         
         self.log("test/loss", loss, on_epoch=True, prog_bar=True, logger=False)
