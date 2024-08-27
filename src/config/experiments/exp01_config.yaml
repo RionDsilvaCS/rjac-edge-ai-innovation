@@ -16,7 +16,7 @@ learning_rate: 0.001
 loss_type: 'cross_entropy_loss'  
 
 min_epochs: 1
-max_epochs: 50
+max_epochs: 120
 log_every_n_steps: 16
 
 limit_train_batches: 0.9
@@ -24,17 +24,17 @@ limit_val_batches: 0.4
 limit_test_batches: 0.25
 
 train:
-  root_dir: E:\edge AI\cable_dataset\processed\train 
+  root_dir: /home/charanarikala/cable_dataset/processed/train
   batch_size: 8
   shuffle: True
 
 val:
-  root_dir: E:\edge AI\cable_dataset\processed\val
+  root_dir: /home/charanarikala/cable_dataset/processed/val
   batch_size: 4
   shuffle: False
 
 test:
-  root_dir: E:\edge AI\cable_dataset\processed\test
+  root_dir: /home/charanarikala/cable_dataset/processed/test
   batch_size: 1
   shuffle: False
 

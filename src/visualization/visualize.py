@@ -2,8 +2,8 @@ from tensorboard.backend.event_processing.event_accumulator import EventAccumula
 import matplotlib.pyplot as plt
 import os
 
-event_file = r"E:\edge AI\rjac-edge-ai-innovation\experiments\exp02\logs\fcn_exp_02\version_18\events.out.tfevents.1724645022.SaiDheerajArikala.16592.0"
-save_pth = r'E:\edge AI\rjac-edge-ai-innovation\experiments\exp02\Results'
+event_file = '/home/charanarikala/rjac-edge-ai-innovation/experiments/exp02/logs/fcn_exp_02/version_74/events.out.tfevents.1724776790.SaiDheerajArikala.16940.0'
+save_pth = '/home/charanarikala/rjac-edge-ai-innovation/experiments/exp02/Results'
 
 def save_graph(tag):
     x, y = [], []

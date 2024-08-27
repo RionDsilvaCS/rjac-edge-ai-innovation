@@ -4,8 +4,8 @@ Fully Convolutional Networks, or FCNs, are an architecture mostly used for seman
 
 ### Model info
 - Model name: Fully Convolutional Networks
-- Params : 25.9 million
-- Size : 103.509 MB
+- Params :  1.9 million
+- Size : 7.640 MB
 
 ## Hyper Parameters 
 
@@ -19,21 +19,21 @@ Fully Convolutional Networks, or FCNs, are an architecture mostly used for seman
 - Optimizer : Adam
 - Learning rate : 0.0001
 - Loss function : Cross Entropy Loss
-- Epochs : 100
+- Epochs : 340
 - Batch size : 4
 - Augmentation : Horizontal flip
 
 ## Results 
 
 ### Train & Validation Loss
-![train_loss](./experiments/exp02/results/ver_0/train.png)
-![val_loss](./experiments/exp02/results/ver_0/val.png)
+![train_loss](./experiments/exp02/Results/train.png)
+![val_loss](./experiments/exp02/Results/val.png)
 
 ### Outputs 
-![img_1](./experiments/exp02/results/ver_0/117.png)
-![img_2](./experiments/exp02/results/ver_0/118.png)
-![img_3](./experiments/exp02/results/ver_0/132.png)
-![img_4](./experiments/exp02/results/ver_0/148.png)
+![img_1](./experiments/exp02/Results/photo/0.png)
+![img_2](./experiments/exp02/Results/photo/1.png)
+![img_3](./experiments/exp02/Results/photo/2.png)
+![img_4](./experiments/exp02/Results/photo/3.png)
 
 ----
 ### Credits💫
