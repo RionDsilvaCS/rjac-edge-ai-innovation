@@ -1,0 +1,39 @@
+accelerator: cpu
+devices: 1
+learning_rate: 0.001
+limit_test_batches: 0.25
+limit_train_batches: 0.9
+limit_val_batches: 0.4
+log_every_n_steps: 16
+log_name: fcn_exp_02
+log_path: ./experiments/exp02/logs
+loss_type: cross_entropy_loss
+max_epochs: 50
+min_epochs: 1
+num_channels: 3
+num_classes: 2
+num_levels: 3
+optimizer_type: adam
+test:
+  batch_size: 1
+  root_dir: E:\edge AI\cable_dataset\processed\test
+  shuffle: false
+train:
+  batch_size: 8
+  root_dir: E:\edge AI\cable_dataset\processed\train
+  shuffle: true
+transform:
+  img_height: 520
+  img_width: 520
+  mean:
+  - 0.485
+  - 0.456
+  - 0.406
+  std:
+  - 0.229
+  - 0.224
+  - 0.225
+val:
+  batch_size: 4
+  root_dir: E:\edge AI\cable_dataset\processed\val
+  shuffle: false

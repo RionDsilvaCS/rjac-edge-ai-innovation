@@ -10,8 +10,9 @@ class LightningModel(L.LightningModule):
         self.cfg = cfg
         self.model = build_model(self.cfg)
         self.criterion = build_loss(self.cfg)
+        self.save_hyperparameters(cfg)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         return self.model(x)
 
     def training_step(self, batch, batch_idx):
@@ -19,12 +20,8 @@ class LightningModel(L.LightningModule):
         out = self(x)
         loss = self.criterion(out, y)
 
-        self.log("train/loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=False)
+        self.log("train/loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
 
-        self.logger.experiment.add_scalar("train/loss",
-                                            loss,
-                                            batch_idx)
-         
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -32,25 +29,17 @@ class LightningModel(L.LightningModule):
         out = self(x)
         loss = self.criterion(out, y)
 
-        self.log("val/loss", loss, on_epoch=True, prog_bar=True, logger=False)
+        self.log("val/loss", loss, on_epoch=True, prog_bar=True, logger=True)
 
-        self.logger.experiment.add_scalar("val/loss",
-                                            loss,
-                                            batch_idx)
-        
         return loss
-    
+
     def test_step(self, batch, batch_idx):
         x, y = batch
         out = self(x)
         loss = self.criterion(out, y)
-        
-        self.log("test/loss", loss, on_epoch=True, prog_bar=True, logger=False)
 
-        self.logger.experiment.add_scalar("test/loss",
-                                            loss,
-                                            batch_idx)
-        
+        self.log("test/loss", loss, on_epoch=True, prog_bar=True, logger=True)
+
         return loss
 
     def configure_optimizers(self):

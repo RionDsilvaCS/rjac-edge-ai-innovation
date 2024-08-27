@@ -1,20 +1,22 @@
 transform:
-  img_width: 224
-  img_height: 224
+  img_width: 520
+  img_height: 520
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
 
-num_channels: 1
-num_classes: 1
-num_levels: 3
+num_channels: 3  
+num_classes: 2 
+num_levels: 3  
 
 accelerator: 'cuda'
 devices: [0]
 
 optimizer_type: 'adam'
 learning_rate: 0.001
-loss_type: 'bce_with_logits_loss'
+loss_type: 'cross_entropy_loss'  
 
 min_epochs: 1
-max_epochs: 3
+max_epochs: 50
 log_every_n_steps: 16
 
 limit_train_batches: 0.9
@@ -22,19 +24,19 @@ limit_val_batches: 0.4
 limit_test_batches: 0.25
 
 train:
-  root_dir: /home/rion/light_proj/gits/edge_ai_seg_model/data/processed/train 
+  root_dir: E:\edge AI\cable_dataset\processed\train 
   batch_size: 8
   shuffle: True
 
 val:
-  root_dir: /home/rion/light_proj/gits/edge_ai_seg_model/data/processed/val
+  root_dir: E:\edge AI\cable_dataset\processed\val
   batch_size: 4
   shuffle: False
 
 test:
-  root_dir: /home/rion/light_proj/gits/edge_ai_seg_model/data/processed/test
-  batch_size: 4
+  root_dir: E:\edge AI\cable_dataset\processed\test
+  batch_size: 1
   shuffle: False
 
-log_name: 'unet_exp_01'
-log_path: './experiments/exp01/logs' 
+log_name: 'fcn_exp_02'
+log_path: './experiments/exp02/logs'
