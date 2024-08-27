@@ -7,7 +7,7 @@ transform:
 num_channels: 1
 num_classes: 2
 
-accelerator: 'cpu'
+accelerator: 'cuda'
 devices: [0]
 
 optimizer_type: 'adam'
@@ -23,17 +23,20 @@ limit_val_batches: 0.4
 limit_test_batches: 0.25
 
 train:
-  root_dir: C:\Users\Anidhinesh\Documents\Benchmark Datasets\cable_dataset\train
+  # root_dir: C:\Users\Anidhinesh\Documents\Benchmark Datasets\cable_dataset\train
+  root_dir: C:\Users\punee\Downloads\cable_dataset\train
   batch_size: 4
   shuffle: True
 
 val:
-  root_dir: C:\Users\Anidhinesh\Documents\Benchmark Datasets\cable_dataset\val
+  # root_dir: C:\Users\Anidhinesh\Documents\Benchmark Datasets\cable_dataset\val
+  root_dir: C:\Users\punee\Downloads\cable_dataset\val
   batch_size: 4
   shuffle: False
 
 test:
-  root_dir: C:\Users\Anidhinesh\Documents\Benchmark Datasets\cable_dataset\test
+  # root_dir: C:\Users\Anidhinesh\Documents\Benchmark Datasets\cable_dataset\test
+  root_dir: C:\Users\punee\Downloads\cable_dataset\test
   batch_size: 4
   shuffle: False
 
