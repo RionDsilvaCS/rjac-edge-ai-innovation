@@ -20,7 +20,7 @@ test_loader = build_data_loader('test', cfg)
 logger = TensorBoardLogger(cfg['log_path'], name=cfg['log_name'])
 
 trainer = L.Trainer(accelerator=cfg['accelerator'], 
-                    devices=cfg['devices'],
+                    # devices=cfg['devices'],
 
                     min_epochs=cfg['min_epochs'],
                     max_epochs=cfg['max_epochs'],

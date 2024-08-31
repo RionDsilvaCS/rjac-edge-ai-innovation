@@ -1,12 +1,14 @@
 transform:
   img_width: 224
   img_height: 224
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
 
 num_channels: 1
-num_classes: 1
-num_levels: 3
+num_classes: 2
+# num_levels: 3
 
-accelerator: 'cuda'
+accelerator: 'cpu'
 devices: [0]
 
 optimizer_type: 'adam'
@@ -22,17 +24,17 @@ limit_val_batches: 0.4
 limit_test_batches: 0.25
 
 train:
-  root_dir: /home/rion/light_proj/gits/edge_ai_seg_model/data/processed/train 
+  root_dir: C:/Users/Anidhinesh/Documents/Benchmark Datasets/cable_dataset/train
   batch_size: 8
   shuffle: True
 
 val:
-  root_dir: /home/rion/light_proj/gits/edge_ai_seg_model/data/processed/val
+  root_dir: C:/Users/Anidhinesh/Documents/Benchmark Datasets/cable_dataset/val
   batch_size: 4
   shuffle: False
 
 test:
-  root_dir: /home/rion/light_proj/gits/edge_ai_seg_model/data/processed/test
+  root_dir: C:/Users/Anidhinesh/Documents/Benchmark Datasets/cable_dataset/test
   batch_size: 4
   shuffle: False
 

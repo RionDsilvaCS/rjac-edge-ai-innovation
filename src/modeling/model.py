@@ -2,101 +2,37 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.modules import Module
-from torch.nn import ConvTranspose2d, Conv2d, MaxPool2d, ModuleList, ReLU
-from torchvision.transforms import CenterCrop
+# import torchvision.models.segmentation as seg
+import torchvision.models.detection as seg
+from torch.nn import Conv2d
 from typing import Dict
 
-class Block(nn.Module):
-	def __init__(self, inChannels, outChannels):
-		super().__init__()
-            
-		self.conv1 = Conv2d(inChannels, outChannels, 3)
-		self.relu = ReLU()
-		self.conv2 = Conv2d(outChannels, outChannels, 3)
-            
-	def forward(self, x):
-
-		return self.conv2(self.relu(self.conv1(x)))
-      
-
-class Encoder(nn.Module):
-	def __init__(self, channels=(3, 16, 32, 64)):
-		super().__init__()
-		
-		self.encBlocks = ModuleList(
-			[Block(channels[i], channels[i + 1])
-			 	for i in range(len(channels) - 1)])
-		self.pool = MaxPool2d(2)
-		
-	def forward(self, x):
-
-		blockOutputs = []
-
-		for block in self.encBlocks:
-			
-			x = block(x)
-			blockOutputs.append(x)
-			x = self.pool(x)
-
-		return blockOutputs    
-
-
-class Decoder(Module):
-	def __init__(self, channels=(64, 32, 16)):
-		super().__init__()
-		
-		self.channels = channels
-		self.upconvs = ModuleList(
-			[ConvTranspose2d(channels[i], channels[i + 1], 2, 2)
-			 	for i in range(len(channels) - 1)])
-		self.dec_blocks = ModuleList(
-			[Block(channels[i], channels[i + 1])
-			 	for i in range(len(channels) - 1)])
-		
-	def forward(self, x, encFeatures):
-		
-		for i in range(len(self.channels) - 1):
-
-			x = self.upconvs[i](x)
-			
-			encFeat = self.crop(encFeatures[i], x)
-			x = torch.cat([x, encFeat], dim=1)
-			x = self.dec_blocks[i](x)
-
-		return x
-	
-	def crop(self, encFeatures, x):
-		
-		(_, _, H, W) = x.shape
-		encFeatures = CenterCrop([H, W])(encFeatures)
-
-		return encFeatures
-
-
-class UNet(nn.Module):
-	def __init__(self, cfg: Dict, encChannels=(3, 16, 32, 64),
-		decChannels=(64, 32, 16),
-		nbClasses=1, retainDim=True,
-		outSize=(224,  224)):
+class maskrcnn_Resnet50_fpn_v2(nn.Module):
+	def __init__(self, cfg: Dict):
 		super().__init__()
 		print("-:-:- Loading Model -:-:-")
 		
-		self.encoder = Encoder(encChannels)
-		self.decoder = Decoder(decChannels)
+		self.mask_rcnn = seg.maskrcnn_resnet50_fpn_v2(weights=seg.MaskRCNN_ResNet50_FPN_V2_Weights.DEFAULT)
+		# self.deeplab.aux_classifier[4] = Conv2d(256, cfg['num_classes'], kernel_size=(1, 1), stride=(1, 1))
+		# self.deeplab.classifier[4] = Conv2d(256, cfg['num_classes'], kernel_size=(1, 1), stride=(1, 1))
 
-		self.head = Conv2d(decChannels[-1], nbClasses, 1)
-		self.retainDim = retainDim
-		self.outSize = outSize
-		
+
 	def forward(self, x):
-		encFeatures = self.encoder(x)
-		decFeatures = self.decoder(encFeatures[::-1][0], encFeatures[::-1][1:])
-		map = self.head(decFeatures)
-		if self.retainDim:
-			map = F.interpolate(map, self.outSize)
-		return map
-
+		x = self.mask_rcnn(x)
+		return x
 
 def build_model(cfg: Dict) -> Module:
-    model = UNet(cfg)
-    return model
+
+	model = maskrcnn_Resnet50_fpn_v2(cfg)
+	model.mask_rcnn.roi_heads = nn.Sequential(*list(model.mask_rcnn.roi_heads.children())[-3:])
+	cls = list(model.mask_rcnn.roi_heads.children())[-1][-1]
+	cls = Conv2d(256, 2, kernel_size=(1, 1), stride=(1, 1))
+	list(model.mask_rcnn.roi_heads.children())[-1][-1] = cls
+	return model
+
+	
+
+	# return model
+
+cfg = build_model('exp01_config.yaml')
+print(cfg)
