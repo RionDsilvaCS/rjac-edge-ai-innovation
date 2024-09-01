@@ -46,7 +46,7 @@ class ImageDataset(Dataset):
             mask = io.read_image(mask_pth)
             mask = self.transform(mask)
         else:
-            mask = torch.zeros((1, 224, 224), dtype=torch.float32)
+            mask = torch.zeros((1, 480, 480), dtype=torch.float32)
 
         img = self.transform(img)
         

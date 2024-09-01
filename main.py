@@ -10,8 +10,8 @@ torch.manual_seed(314159)
 
 cfg = build_config('exp01_config.yaml')
     
-model = LightningModel(cfg)
-# model = LightningModel.load_from_checkpoint('pth/name.ckpt', config=config)
+#model = LightningModel(cfg)
+model = LightningModel.load_from_checkpoint('/home/charanarikala/rjac-edge-ai-innovation/experiments/exp03/logs/segnet_exp_01/version_3/checkpoints/epoch=45-step=782.ckpt', cfg=cfg)
 
 train_loader = build_data_loader('train', cfg)
 val_loader = build_data_loader('val', cfg)

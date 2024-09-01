@@ -1,102 +1,104 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from torch.nn.modules import Module
-from torch.nn import ConvTranspose2d, Conv2d, MaxPool2d, ModuleList, ReLU
-from torchvision.transforms import CenterCrop
 from typing import Dict
 
-class Block(nn.Module):
-	def __init__(self, inChannels, outChannels):
-		super().__init__()
-            
-		self.conv1 = Conv2d(inChannels, outChannels, 3)
-		self.relu = ReLU()
-		self.conv2 = Conv2d(outChannels, outChannels, 3)
-            
-	def forward(self, x):
+class EncoderBlock(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(EncoderBlock, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.relu = nn.ReLU()
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
+        self.bn2 = nn.BatchNorm2d(out_channels)
+        self.relu2 = nn.ReLU()
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2, return_indices=True)
+        
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x = self.relu2(x)
+        x, indices = self.pool(x)
+        return x, indices
 
-		return self.conv2(self.relu(self.conv1(x)))
-      
+class DecoderBlock(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(DecoderBlock, self).__init__()
+        self.unpool = nn.MaxUnpool2d(kernel_size=2, stride=2)
+        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1)
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.relu = nn.ReLU()
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
+        self.bn2 = nn.BatchNorm2d(out_channels)
+        
+    def forward(self, x, indices, output_size):
+        x = self.unpool(x, indices, output_size=output_size)
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.conv2(x)
+        x = self.bn2(x)
+        return x
 
-class Encoder(nn.Module):
-	def __init__(self, channels=(3, 16, 32, 64)):
-		super().__init__()
-		
-		self.encBlocks = ModuleList(
-			[Block(channels[i], channels[i + 1])
-			 	for i in range(len(channels) - 1)])
-		self.pool = MaxPool2d(2)
-		
-	def forward(self, x):
+class SegNet(nn.Module):
+    def __init__(self, num_channels, num_classes):
+        super(SegNet, self).__init__()
+        
+        # Encoder
+        self.encoders = nn.ModuleList([
+            EncoderBlock(num_channels, 32),
+            EncoderBlock(32, 64),
+            EncoderBlock(64, 128),
+            EncoderBlock(128, 256)
+        ])
+        
+        # Bottleneck
+        self.bottleneck = nn.Sequential(
+            nn.Conv2d(256, 512, kernel_size=3, padding=1),
+            nn.BatchNorm2d(512),
+            nn.ReLU(),
+            nn.Conv2d(512, 256, kernel_size=1)  # Reduce channels to 256
+        )
+        
+        # Decoder
+        self.decoders = nn.ModuleList([
+            DecoderBlock(256, 128),
+            DecoderBlock(128, 64),
+            DecoderBlock(64, 32),
+            DecoderBlock(32, 32)
+        ])
+        
+        # Final layer
+        self.final_conv = nn.Conv2d(32, num_classes, kernel_size=1)
+        
+    def forward(self, x):
+        skip_connections = []
+        indices_list = []
+        sizes = []  # List to keep track of sizes for unpooling
+        
+        # Encoding
+        for encoder in self.encoders:
+            sizes.append(x.size())  # Keep track of the size before max pooling
+            x, indices = encoder(x)
+            skip_connections.append(x)
+            indices_list.append(indices)
+        
+        # Bottleneck
+        x = self.bottleneck(x)
+        
+        # Decoding
+        for i, decoder in enumerate(self.decoders):
+            x = decoder(x, indices_list[-(i+1)], sizes[-(i+1)])
+        
+        # Final classification
+        x = self.final_conv(x)
+        return x
 
-		blockOutputs = []
+def build_model(cfg: Dict) -> nn.Module:
+    return SegNet(num_channels=cfg['num_channels'], num_classes=cfg['num_classes'])
 
-		for block in self.encBlocks:
-			
-			x = block(x)
-			blockOutputs.append(x)
-			x = self.pool(x)
-
-		return blockOutputs    
-
-
-class Decoder(Module):
-	def __init__(self, channels=(64, 32, 16)):
-		super().__init__()
-		
-		self.channels = channels
-		self.upconvs = ModuleList(
-			[ConvTranspose2d(channels[i], channels[i + 1], 2, 2)
-			 	for i in range(len(channels) - 1)])
-		self.dec_blocks = ModuleList(
-			[Block(channels[i], channels[i + 1])
-			 	for i in range(len(channels) - 1)])
-		
-	def forward(self, x, encFeatures):
-		
-		for i in range(len(self.channels) - 1):
-
-			x = self.upconvs[i](x)
-			
-			encFeat = self.crop(encFeatures[i], x)
-			x = torch.cat([x, encFeat], dim=1)
-			x = self.dec_blocks[i](x)
-
-		return x
-	
-	def crop(self, encFeatures, x):
-		
-		(_, _, H, W) = x.shape
-		encFeatures = CenterCrop([H, W])(encFeatures)
-
-		return encFeatures
-
-
-class UNet(nn.Module):
-	def __init__(self, cfg: Dict, encChannels=(3, 16, 32, 64),
-		decChannels=(64, 32, 16),
-		nbClasses=1, retainDim=True,
-		outSize=(224,  224)):
-		super().__init__()
-		print("-:-:- Loading Model -:-:-")
-		
-		self.encoder = Encoder(encChannels)
-		self.decoder = Decoder(decChannels)
-
-		self.head = Conv2d(decChannels[-1], nbClasses, 1)
-		self.retainDim = retainDim
-		self.outSize = outSize
-		
-	def forward(self, x):
-		encFeatures = self.encoder(x)
-		decFeatures = self.decoder(encFeatures[::-1][0], encFeatures[::-1][1:])
-		map = self.head(decFeatures)
-		if self.retainDim:
-			map = F.interpolate(map, self.outSize)
-		return map
-
-
-def build_model(cfg: Dict) -> Module:
-    model = UNet(cfg)
-    return model
+# Example usage
+cfg = {'num_channels': 3, 'num_classes': 10}
+model = build_model(cfg)
