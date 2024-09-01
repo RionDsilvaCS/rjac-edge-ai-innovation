@@ -1,7 +1,7 @@
 import lightning as L
 import torch
 from src.solver import build_optimizer, build_loss
-from src.modeling import build_model
+from src.model import build_model
 
 class LightningModel(L.LightningModule):
     def __init__(self, cfg):
@@ -19,11 +19,11 @@ class LightningModel(L.LightningModule):
         out = self(x)
         loss = self.criterion(out, y)
 
-        self.log("train/loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=False)
+        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
 
-        self.logger.experiment.add_scalar("train/loss",
-                                            loss,
-                                            batch_idx)
+        # self.logger.experiment.add_scalar("train/loss",
+        #                                     loss,
+        #                                     batch_idx)
          
         return loss
 
@@ -32,11 +32,11 @@ class LightningModel(L.LightningModule):
         out = self(x)
         loss = self.criterion(out, y)
 
-        self.log("val/loss", loss, on_epoch=True, prog_bar=True, logger=False)
+        self.log("val_loss", loss, on_epoch=True, prog_bar=True, logger=True)
 
-        self.logger.experiment.add_scalar("val/loss",
-                                            loss,
-                                            batch_idx)
+        # self.logger.experiment.add_scalar("val/loss",
+        #                                     loss,
+        #                                     batch_idx)
         
         return loss
     
@@ -45,11 +45,11 @@ class LightningModel(L.LightningModule):
         out = self(x)
         loss = self.criterion(out, y)
         
-        self.log("test/loss", loss, on_epoch=True, prog_bar=True, logger=False)
+        self.log("test_loss", loss, on_epoch=True, prog_bar=True, logger=True)
 
-        self.logger.experiment.add_scalar("test/loss",
-                                            loss,
-                                            batch_idx)
+        # self.logger.experiment.add_scalar("test/loss",
+        #                                     loss,
+        #                                     batch_idx)
         
         return loss
 

@@ -2,8 +2,8 @@ from tensorboard.backend.event_processing.event_accumulator import EventAccumula
 import matplotlib.pyplot as plt
 import os
 
-event_file = '/home/rion/light_proj/gits/edge_ai_seg_model/experiments/exp01/logs/unet_exp_01/version_2/events.out.tfevents.1724178699.VictusBaby.3869.0'
-save_pth = '/home/rion/light_proj/gits/edge_ai_seg_model/experiments/exp01/results'
+event_file = '/home/rion/light_proj/gits/edge_ai_seg_model/experiments/exp01/logs/exp_01_hrnet/version_0/events.out.tfevents.1725168097.VictusBaby.9781.0'
+save_pth = '/home/rion/light_proj/gits/edge_ai_seg_model/experiments/exp01/results/ver_1'
 
 def save_graph(tag):
     x, y = [], []

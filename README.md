@@ -1,34 +1,41 @@
-# Team RJAC Edge AI Innovation Challenge 2024
+# HRNet for Semantic Segmentation
 
-Deep learning architectures for segmentation are crucial in computer vision, enabling precise delineation of objects within images. Here’s a list of notable architectures tailored for segmentation tasks:
+HRNet (High-Resolution Network) is a state-of-the-art deep learning model for semantic segmentation tasks. It maintains high-resolution representations throughout the entire network, unlike traditional models that first encode the input into a low-resolution representation and then recover the high-resolution output.
 
-## Architectures for Image Segmentation
+### Model info
+- Model name: HRNet
+- Params : 9.6 million
+- Size : 38.54 MB
 
-### U-Net
-- Originally designed for biomedical image segmentation, U-Net features a symmetric architecture consisting of a contracting path (encoder) and an expansive path (decoder). The encoder captures context, while the decoder enables precise localization.
-  
-### Mask R-CNN
-- An extension of Faster R-CNN, Mask R-CNN adds a branch for predicting segmentation masks on each Region of Interest (RoI). It simultaneously performs object detection and pixel-wise segmentation.
+## Hyper Parameters 
 
-### DeepLab
-- DeepLab employs atrous convolution to capture multi-scale context by using dilated convolutions. This architecture is effective for semantic segmentation, allowing for better edge detection and context understanding.
+### Input Transform
+- Image Width : 520 px
+- Image Height : 520 px
+- mean : [0.485, 0.456, 0.406]
+- std : [0.229, 0.224, 0.225]
 
-### Fully Convolutional Networks (FCN)
-- FCNs replace fully connected layers with convolutional layers, allowing the network to output segmentation maps of the same size as the input image. They are foundational in segmentation tasks.
+### Training
+- Optimizer : Adam
+- Learning rate : 0.001
+- Loss function : Cross Entropy Loss
+- Epochs : 100
+- Batch size : 4
+- Augmentation : Horizontal flip
 
-### Gated-SCNN
-- This architecture integrates a two-stream CNN where one stream captures shape information and the other processes boundary information, enhancing segmentation accuracy.
+## Results 
 
-### SegNet
-- SegNet consists of an encoder-decoder architecture where the encoder captures features and the decoder upsamples them to create the final segmentation map. It is known for its simplicity and effectiveness.
+### Train & Validation Loss
+![train_loss](./experiments/exp01/results/ver_1/train_loss_epoch.png)
+![val_loss](./experiments/exp01/results/ver_1/val_loss.png)
 
-### PSPNet (Pyramid Scene Parsing Network)
-- PSPNet employs a pyramid pooling module to capture global context information at different scales, improving segmentation performance in complex scenes.
+### Outputs 
+![img_1](./experiments/exp01/results/ver_1/140.png)
+![img_2](./experiments/exp01/results/ver_1/143.png)
+![img_3](./experiments/exp01/results/ver_1/145.png)
+![img_4](./experiments/exp01/results/ver_1/148.png)
 
-### HRNet (High-Resolution Network)
-- HRNet maintains high-resolution representations through the entire network, allowing it to capture fine details necessary for accurate segmentation.
-
-
+----
 ### Credits💫
 
 >GitHub [@RionDsilvaCS](https://github.com/RionDsilvaCS)  ·  Linkedin [@Rion Dsilva](https://www.linkedin.com/in/rion-dsilva-043464229/)
