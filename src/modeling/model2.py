@@ -95,12 +95,12 @@ class R2AttU_Net(nn.Module):
         
         self.RRCNN4 = RRCNN_block(ch_in=256,ch_out=512,t=t)
         
-        self.RRCNN5 = RRCNN_block(ch_in=512,ch_out=1024,t=t)
+        # self.RRCNN5 = RRCNN_block(ch_in=512,ch_out=1024,t=t)
         
 
-        self.Up5 = up_conv(ch_in=1024,ch_out=512)
-        self.Att5 = Attention_block(F_g=512,F_l=512,F_int=256)
-        self.Up_RRCNN5 = RRCNN_block(ch_in=1024, ch_out=512,t=t)
+        # self.Up5 = up_conv(ch_in=1024,ch_out=512)
+        # self.Att5 = Attention_block(F_g=512,F_l=512,F_int=256)
+        # self.Up_RRCNN5 = RRCNN_block(ch_in=1024, ch_out=512,t=t)
         
         self.Up4 = up_conv(ch_in=512,ch_out=256)
         self.Att4 = Attention_block(F_g=256,F_l=256,F_int=128)
@@ -130,16 +130,17 @@ class R2AttU_Net(nn.Module):
         x4 = self.Maxpool(x3)
         x4 = self.RRCNN4(x4)
 
-        x5 = self.Maxpool(x4)
-        x5 = self.RRCNN5(x5)
+        # x5 = self.Maxpool(x4)
+        # x5 = self.RRCNN5(x5)
 
         # decoding + concat path
-        d5 = self.Up5(x5)
-        x4 = self.Att5(g=d5,x=x4)
-        d5 = torch.cat((x4,d5),dim=1)
-        d5 = self.Up_RRCNN5(d5)
+        # d5 = self.Up5(x5)
+        # x4 = self.Att5(g=d5,x=x4)
+        # d5 = torch.cat((x4,d5),dim=1)
+        # d5 = self.Up_RRCNN5(d5)
         
-        d4 = self.Up4(d5)
+        # d4 = self.Up4(d5)
+        d4 = self.Up4(x4)
         x3 = self.Att4(g=d4,x=x3)
         d4 = torch.cat((x3,d4),dim=1)
         d4 = self.Up_RRCNN4(d4)

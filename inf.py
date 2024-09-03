@@ -12,7 +12,7 @@ model = LightningModel.load_from_checkpoint('experiments/exp01/logs/unet_exp_01/
 test_loader = build_data_loader('test', cfg)
 
 for idx, (i, o) in enumerate(test_loader, 0):
-    i = i.to('cpu')
+    i = i.to('cuda')
     with torch.no_grad():
         out = model(i)
     out = out.squeeze(0)
